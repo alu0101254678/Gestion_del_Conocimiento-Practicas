@@ -276,13 +276,30 @@ double Matrix::prediccion_simple(int i, int j) {
   }
   
   std::cout << "Vecinos considerados del usuario: " << usuario << " -> " << vecinos_proximos << " vecinos" << std::endl << std::endl;
+  int contador = 0;
+  int diferencia = 0;
   for (int i = 0; i < vecinos_proximos; i++) {
     for (size_t j = 0; j < filas; j++) {
       if (usuario != j && !es_nulo(j, producto)) {
         if (vect_ord_mayor[i] == similitudes_aux[{usuario, j}]) {
           std::cout << "usuario " << j << " : " << vect_ord_mayor[i] << std::endl;
+          contador++;
         }
       }
+    }
+  }
+
+  if (contador < vecinos_proximos) {
+    diferencia = vecinos_proximos - contador;
+    for (int i = 0; i < diferencia; i++) {
+      for (size_t j = 0; j < filas; j++) {
+        if (usuario != j && !es_nulo(j, producto)) {
+          if (vect_ord_mayor[vecinos_proximos] == similitudes_aux[{usuario, j}]) {
+            std::cout << "usuario " << j << " : " << vect_ord_mayor[vecinos_proximos] << std::endl;
+          }
+        }
+      }
+      vecinos_proximos++;
     }
   }
   
@@ -298,6 +315,21 @@ double Matrix::prediccion_simple(int i, int j) {
       }
     }
     denominador += vect_ord_mayor[i];
+  }
+
+  if (contador < vecinos_proximos) {
+    diferencia = vecinos_proximos - contador;
+    for (int i = 0; i < diferencia; i++) {
+      for (size_t j = 0; j < filas; j++) {
+        if (usuario != j && !es_nulo(j, producto)) {
+          if (vect_ord_mayor[vecinos_proximos] == similitudes_aux[{usuario, j}]) {
+            numerador += vect_ord_mayor[vecinos_proximos] * matriz[j][producto];
+          }
+        }
+      }
+      denominador += vect_ord_mayor[vecinos_proximos];
+      vecinos_proximos++;
+    }
   }
   resultado = numerador / denominador;
   valores_completar[{usuario, producto}] = resultado; //para ponerlo en el map de valores a completar
@@ -345,16 +377,33 @@ double Matrix::diferencia_con_la_media(int i, int j) {
   //mostramos por pantalla los vecinos considerados, el numero y para cada uno de ellos
   //su similitud con el usuario a
   std::cout << "Vecinos considerados del usuario: " << usuario << " -> " << vecinos_proximos << " vecinos" << std::endl << std::endl;
+  int contador = 0;
+  int diferencia = 0;
   for (int i = 0; i < vecinos_proximos; i++) {
     for (size_t j = 0; j < filas; j++) {
       if (usuario != j && !es_nulo(j, producto)) {
         if (vect_ord_mayor[i] == similitudes_aux[{usuario, j}]) {
           std::cout << "usuario " << j << " : " << vect_ord_mayor[i] << std::endl;
+          contador++;
         }
       }
     }
   }
+  if (contador < vecinos_proximos) {
+    diferencia = vecinos_proximos - contador;
+    for (int i = 0; i < diferencia; i++) {
+      for (size_t j = 0; j < filas; j++) {
+        if (usuario != j && !es_nulo(j, producto)) {
+          if (vect_ord_mayor[vecinos_proximos] == similitudes_aux[{usuario, j}]) {
+            std::cout << "usuario " << j << " : " << vect_ord_mayor[vecinos_proximos] << std::endl;
+          }
+        }
+      }
+      vecinos_proximos++;
+    }
+  }
   
+
   double numerador = 0;
   double denominador = 0;
   for (int i = 0; i < vecinos_proximos; i++) {
@@ -367,6 +416,20 @@ double Matrix::diferencia_con_la_media(int i, int j) {
       }
     }
     denominador += vect_ord_mayor[i];
+  }
+  if (contador < vecinos_proximos) {
+    diferencia = vecinos_proximos - contador;
+    for (int i = 0; i < diferencia; i++) {
+      for (size_t j = 0; j < filas; j++) {
+        if (usuario != j && !es_nulo(j, producto)) {
+          if (vect_ord_mayor[vecinos_proximos] == similitudes_aux[{usuario, j}]) {
+            numerador += vect_ord_mayor[vecinos_proximos] * (matriz[j][producto] - media[j]);
+          }
+        }
+      }
+      denominador += vect_ord_mayor[vecinos_proximos];
+      vecinos_proximos++;
+    }
   }
   resultado = numerador / denominador;
   resultado += media[usuario];
